@@ -256,7 +256,7 @@ void manageServer() {
             client.println("        </div>");
             client.println("        <div class=\"line\"></div>");
             client.println("        <label for=\"rgb\">Farbe</label>");
-            client.println("        <input class=\"jscolor {onFineChange:'update(this)'}\" id=\"rgb\">");
+            client.println("        <input data-jscolor + \"{onFineChange:'update(this)'}\" id=\"rgb\">");
             client.println("        <div class=\"checkboxcontainer\">");
             client.println("            <input type=\"checkbox\" id=\"checkboxtitle\" name=\"title\">");
             client.println("            <label for=\"title\">\"Es Ist\" Einblenden</label>");
@@ -265,7 +265,7 @@ void manageServer() {
             client.println("            <input type=\"checkbox\" id=\"checkboxdimm\" name=\"dimm\">");
             client.println("            <label for=\"dimm\">Uhr Dimmen</label>");
             client.println("        </div>");
-            client.println("        <label>Zwishen</label>");
+            client.println("        <label>Zwischen</label>");
             client.println("        <input type=\"time\" id=\"onTime\">");
             client.println("        <label class=\"sep\">-</label>");
             client.println("        <input type=\"time\" id=\"offTime\">");
