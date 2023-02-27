@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport " content="width=device-width, initial-scale=1 ">
+    <link rel="icon " href="data:, ">
+    <title>NEOclockOs Setup</title>
+    <link rel="stylesheet " href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css ">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jscolor/2.0.4/jscolor.min.js "></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;900&family=Poppins&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            background-color: #1e1e1e;
+            font-family: poppins;
+            color: white;
+        }
+
+        .container {
+            margin-top: calc(50vh - 20em);
+            background-color: #2d2d30;
+            width: 30em;
+            height: 24em;
+            border-radius: 10px;
+            animation: topbarfadein 400ms;
+        }
+
+        @keyframes topbarfadein {
+            from {
+                transform: translateY(-100px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        h1 {
+            margin-top: 20px;
+            margin-left: 15px;
+        }
+
+        .line {
+            margin-top: -9px;
+            margin-left: 0px;
+            margin-right: 0px;
+            border: 2px solid #3e3e42;
+        }
+
+        label {
+            margin-top: 20px;
+            margin-left: 0px;
+        }
+
+        .jscolor {
+            margin-top: -3px;
+            margin-left: 0px;
+            width: 100%;
+            height: 40px;
+            border: none;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        input[type=time] {
+            align-self: left;
+            margin-left: 50px;
+            width: 100px;
+            height: 40px;
+            border: none;
+            border-radius: 8px;
+            text-align: center;
+            background-color: #3e3e42;
+            color: #ffffff;
+        }
+
+        .sep {
+            margin-left: 25px;
+
+
+        }
+
+        #offTime {
+            margin-left: 25px;
+        }
+
+        input[type=checkbox] {
+            margin-left: 0px;
+            margin-top: 20px;
+
+
+        }
+
+        .checkboxcontainer {
+            margin-top: -10px;
+            margin-left: 0px;
+            width: 100%;
+        }
+
+        #change_color {
+            margin-top: 20px;
+            margin-left: 0px;
+            width: 100%;
+            height: 50px;
+            border: none;
+            border-radius: 8px;
+
+
+        }
+        .footer {
+            position: fixed;
+            left: 0;
+            bottom: 0px;
+            width: 100%;
+            height: 15px;
+            font-size: 10px;
+            background-color: #000000;
+            color: white;
+            text-align: center;
+            transition: 250ms;
+            opacity: 0;
+        }
+        .footer:hover {
+            opacity: 1;
+                }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <h1>NEOclock OS</h1>
+        </div>
+        <div class="line"></div>
+
+        <label for="rgb">Farbe</label>
+        <input class="jscolor {onFineChange:'update(this)'}" id="rgb">
+        <div class="checkboxcontainer">
+            <input type="checkbox" id="checkboxtitle" name="title">
+            <label for="title">"Es Ist" Einblenden</label>
+        </div>
+        <div class="checkboxcontainer">
+            <input type="checkbox" id="checkboxdimm" name="dimm">
+            <label for="dimm">Uhr Dimmen</label>
+        </div>
+        <label>Zwishen</label>
+        <input type="time" id="onTime">
+        <label class="sep">-</label>
+        <input type="time" id="offTime">
+
+        <a class="btn btn-primary btn-lg" href="#" id="change_color" role="button">Save</a>
+    </div>
+    <div class="footer">
+        <p>(C) 2023 <a href="spyminer.dev">SpyMiner</a></p> All rights reserved.
+    </div>
+    <script>function update(picker) {
+            document.getElementById('rgb').innerHTML = Math.round(picker.rgb[0]) + ', ' + Math.round(picker.rgb[1]) + ', ' + Math.round(picker.rgb[2]); var checkbox = document.getElementById("checkbox "); var value = checkbox.checked ? "checked " : "unchecked "; var onTime = document.getElementByID("onTime "); var offTime = document.getElementByID("offTime "); var dimm = document.getElementById("checkboxdimm "); var dimmvalue = dimm.checked ? "checked " : "unchecked ";
+            document.getElementById("change_color ").href = "?r" + Math.round(picker.rgb[0]) + "g" + Math.round(picker.rgb[1]) + "b" + Math.round(picker.rgb[2]) + "t" + value + "o" + onTime + "f" + offTime + "x" + dimmvalue + "& ";
+        }</script>
+</body>
+
+</html>
