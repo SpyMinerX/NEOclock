@@ -241,11 +241,7 @@ void manageServer() {
             client.println("            color: white;");
             client.println("            text-align: center;");
             client.println("            transition: 250ms;");
-            client.println("            opacity: 0;");
             client.println("        }");
-            client.println("        .footer:hover {");
-            client.println("            opacity: 1;");
-            client.println("                }");
             client.println("    </style>");
             client.println("</head>");
             client.println("<body>");
