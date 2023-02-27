@@ -65,8 +65,7 @@ int pos5 = 0;
 int pos6 = 0;
 int pos7 = 0;
 int pos8 = 0;
-bool isDimmed = false;
-int dimmerDividerAmount = 4;
+int dimmedValue = 10;
 void setup() {
   Serial.begin(115200);
   NEOstrip.begin();
@@ -256,7 +255,7 @@ void manageServer() {
             client.println("        </div>");
             client.println("        <div class=\"line\"></div>");
             client.println("        <label for=\"rgb\">Farbe</label>");
-            client.println("        <input data-jscolor + \"{onFineChange:'update(this)'}\" id=\"rgb\">");
+            client.println("        <input data-jscolor = \"{}\" id=\"rgb\">");
             client.println("        <div class=\"checkboxcontainer\">");
             client.println("            <input type=\"checkbox\" id=\"checkboxtitle\" name=\"title\">");
             client.println("            <label for=\"title\">\"Es Ist\" Einblenden</label>");
@@ -269,17 +268,20 @@ void manageServer() {
             client.println("        <input type=\"time\" id=\"onTime\">");
             client.println("        <label class=\"sep\">-</label>");
             client.println("        <input type=\"time\" id=\"offTime\">");
-            client.println("        <a class=\"btn btn-primary btn-lg\" href=\"#\" id=\"change_color\" role=\"button\">Save</a>");
+            client.println("        <input type=\"button\" value=\"Save\" id=\"change_color\">");
             client.println("    </div>");
             client.println("    <div class=\"footer\">");
             client.println("        <p>(C) 2023 <a href=\"spyminer.dev\">SpyMiner</a></p> All rights reserved.");
             client.println("    </div>");
-            client.println("    <script>function update(picker) {");
-            client.println("            document.getElementById('rgb').innerHTML = Math.round(picker.rgb[0]) + ', ' + Math.round(picker.rgb[1]) + ', ' + Math.round(picker.rgb[2]);");
-            client.println("            var checkbox = document.getElementById(\"checkbox\");");
-            client.println("            var value = checkbox.checked ? \"checked\" : \"unchecked\"; var onTime = document.getElementByID(\"onTime\"); var offTime = document.getElementByID(\"offTime\"); var dimm = document.getElementById(\"checkboxdimm\"); var dimmvalue = dimm.checked ? \"checked\" : \"unchecked\";");
-            client.println("            document.getElementById(\"change_color\").href = \"?r\" + Math.round(picker.rgb[0]) + \"g\" + Math.round(picker.rgb[1]) + \"b\" + Math.round(picker.rgb[2]) + \"t\" + value + \"o\" + onTime + \"f\" + offTime + \"x\" + dimmvalue + \"& \";");
-            client.println("        }</script>");
+            client.println("    <script>var button = document.getElementById(\"change_color\"); \
+const picker = new jscolor(document.getElementById(\"rgb\")); \
+button.addEventListener(\"click\", () => {\
+    const titleVal = document.getElementById(\"checkboxtitle\").checked ? \"checked\" : \"unchecked\";\
+    const dimmVal = document.getElementById(\"checkboxdimm\").checked ? \"checked\" : \"unchecked\";\
+    const onTimeVal = document.getElementById(\"onTime\").value;\
+    const offTimeVal = document.getElementById(\"offTime\").value;\
+    window.location.href = `?r${Math.round(picker.rgb[0])}g${Math.round(picker.rgb[1])}b${Math.round(picker.rgb[2])}t${titleVal}o${onTimeVal}f${offTimeVal}x${dimmVal}&`;\
+});</script>");
             client.println("</body>");
             client.println("</html>");
             // The HTTP response ends with another blank line
@@ -339,11 +341,53 @@ void setLEDs(NTPClient time) {
   }
   int mins = time.getMinutes();
 
-  if (onTime == (time.getHours() + ":" + mins)) {
-    isDimmed = false;
-  }
-  if (offTime == (time.getHours() + ":" + mins)) {
-    isDimmed = true;
+  if(dimm == "checked")
+  {
+    int onTimeMin = onTime.substring(0,2).toInt();
+    int onTimeHour = onTime.substring(3,5).toInt();
+    int offTimeMin = offTime.substring(0,2).toInt();
+    int offTimeHour = offTime.substring(3,5).toInt();
+    if(time.getHours() > onTimeHour && time.getHours() < offTimeHour)
+    {
+      NEOstrip.setBrightness(50);
+    }
+    else if(time.getHours() == onTimeHour && time.getHours() == offTimeHour)
+    {
+      if(time.getMinutes() > onTimeMin && time.getMinutes() < offTimeMin)
+      {
+        NEOstrip.setBrightness(dimmedValue);
+      }
+      else
+      {
+        NEOstrip.setBrightness(255);
+      }
+    }
+    else if(time.getHours() == onTimeHour)
+    {
+      if(time.getMinutes() > onTimeMin)
+      {
+        NEOstrip.setBrightness(dimmedValue);
+      }
+      else
+      {
+        NEOstrip.setBrightness(255);
+      }
+    }
+    else if(time.getHours() == offTimeHour)
+    {
+      if(time.getMinutes() < offTimeMin)
+      {
+        NEOstrip.setBrightness(dimmedValue);
+      }
+      else
+      {
+        NEOstrip.setBrightness(255);
+      }
+    }
+    else
+    {
+      NEOstrip.setBrightness(255);
+    }
   }
 
   //Serial.println(hours);
@@ -460,10 +504,6 @@ void setLEDs(NTPClient time) {
 
 void render(int leds[]) {
   for (int i = 0; i < 11; i++) {
-    if (isDimmed) {
-      NEOstrip.setPixelColor(leds[i], NEOstrip.Color(redString.toInt() / dimmerDividerAmount, greenString.toInt() / dimmerDividerAmount, blueString.toInt() / dimmerDividerAmount));
-    } else {
       NEOstrip.setPixelColor(leds[i], NEOstrip.Color(redString.toInt(), greenString.toInt(), blueString.toInt()));
-    }
   }
 }

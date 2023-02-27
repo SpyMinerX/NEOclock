@@ -111,6 +111,7 @@
 
 
         }
+
         .footer {
             position: fixed;
             left: 0;
@@ -124,9 +125,10 @@
             transition: 250ms;
             opacity: 0;
         }
+
         .footer:hover {
             opacity: 1;
-                }
+        }
     </style>
 </head>
 
@@ -147,20 +149,26 @@
             <input type="checkbox" id="checkboxdimm" name="dimm">
             <label for="dimm">Uhr Dimmen</label>
         </div>
-        <label>Zwishen</label>
+        <label>Zwischen</label>
         <input type="time" id="onTime">
         <label class="sep">-</label>
         <input type="time" id="offTime">
-
-        <a class="btn btn-primary btn-lg" href="#" id="change_color" role="button">Save</a>
+        <input type="button" value="Save" id="change_color">
     </div>
     <div class="footer">
         <p>(C) 2023 <a href="spyminer.dev">SpyMiner</a></p> All rights reserved.
     </div>
-    <script>function update(picker) {
-            document.getElementById('rgb').innerHTML = Math.round(picker.rgb[0]) + ', ' + Math.round(picker.rgb[1]) + ', ' + Math.round(picker.rgb[2]); var checkbox = document.getElementById("checkbox "); var value = checkbox.checked ? "checked " : "unchecked "; var onTime = document.getElementByID("onTime "); var offTime = document.getElementByID("offTime "); var dimm = document.getElementById("checkboxdimm "); var dimmvalue = dimm.checked ? "checked " : "unchecked ";
-            document.getElementById("change_color ").href = "?r" + Math.round(picker.rgb[0]) + "g" + Math.round(picker.rgb[1]) + "b" + Math.round(picker.rgb[2]) + "t" + value + "o" + onTime + "f" + offTime + "x" + dimmvalue + "& ";
-        }</script>
+    <script>
+        var button = document.getElementById("change_color");
+        button.addEventListener("click", function () {
+            var picker = new jscolor(document.getElementById("rgb"));
+            var title = document.getElementById("checkboxtitle").checked ? "checked" : "unchecked";
+            var dimm = document.getElementById("checkboxdimm").checked ? "checked" : "unchecked";
+            var onTime = document.getElementById("onTime").value;
+            var offTime = document.getElementById("offTime").value;
+            window.location.href = "?r" + Math.round(picker.rgb[0]) + "g" + Math.round(picker.rgb[1]) + "b" + Math.round(picker.rgb[2]) + "t" + value + "o" + onTime + "f" + offTime + "x" + dimmvalue + "& ";
+        })
+    </script>
 </body>
 
 </html>
