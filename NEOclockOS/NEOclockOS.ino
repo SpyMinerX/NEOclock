@@ -108,7 +108,7 @@ void loop() {
   //Serial.println(redString + " " + blueString + " " + greenString);
   //Serial.println(timeClient.getFormattedTime());
   setLEDs(timeClient);
-  delay(100);
+  delay(2000);
 }
 
 void manageServer() {
