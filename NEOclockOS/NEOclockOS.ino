@@ -106,6 +106,7 @@ void setup() {
 
 void loop() {
   manageServer();
+  timeClient.update();
   //Serial.println(redString + " " + blueString + " " + greenString);
   //Serial.println(timeClient.getFormattedTime());
   setLEDs(timeClient);
