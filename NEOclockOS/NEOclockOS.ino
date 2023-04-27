@@ -91,6 +91,7 @@ void setup() {
   server.begin();
   timeClient.begin();
   timeClient.setTimeOffset(3600);
+  timeClient.setTimeZone(1);
   timeClient.update();
   preferences.begin("Setting", false);
   redString = preferences.getString("redString");
