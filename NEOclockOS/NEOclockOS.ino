@@ -65,7 +65,14 @@ int pos5 = 0;
 int pos6 = 0;
 int pos7 = 0;
 int pos8 = 0;
-int dimmedValue = 10;
+int dimmedValue = 50;
+
+int dstStartDay = 31; // Day of the month when DST starts
+int dstStartMonth = 3; // Month when DST starts (March)
+int dstEndDay = 29; // Day of the month when DST ends
+int dstEndMonth = 10; // Month when DST ends (November)
+
+
 void setup() {
   Serial.begin(115200);
   NEOstrip.begin();
@@ -90,8 +97,6 @@ void setup() {
   Serial.println(WiFi.getHostname());
   server.begin();
   timeClient.begin();
-  timeClient.setTimeOffset(3600);
-  timeClient.setTimeZone(1);
   timeClient.update();
   preferences.begin("Setting", false);
   redString = preferences.getString("redString");
@@ -107,8 +112,18 @@ void setup() {
 void loop() {
   manageServer();
   timeClient.update();
-  //Serial.println(redString + " " + blueString + " " + greenString);
-  //Serial.println(timeClient.getFormattedTime());
+  unsigned long epochTime = timeClient.getEpochTime();
+  struct tm *ptm = gmtime ((time_t *)&epochTime);
+  int currentDay = ptm->tm_mday;
+  int currentMonth = ptm->tm_mon+1;
+
+  if ((currentMonth > dstStartMonth && currentMonth < dstEndMonth) ||
+      (currentMonth == dstStartMonth && currentDay >= dstStartDay) ||
+      (currentMonth == dstEndMonth && currentDay <= dstEndDay)) {
+    timeClient.setTimeOffset(3600); 
+  } else {
+    timeClient.setTimeOffset(7200); 
+  }
   setLEDs(timeClient);
   delay(2000);
 }
@@ -339,60 +354,46 @@ void setLEDs(NTPClient time) {
   }
   int mins = time.getMinutes();
 
-  if(dimm == "checked")
+  if (dimm == "checked") 
   {
-    int onTimeMin = onTime.substring(0,2).toInt();
-    int onTimeHour = onTime.substring(3,5).toInt();
-    int offTimeMin = offTime.substring(0,2).toInt();
-    int offTimeHour = offTime.substring(3,5).toInt();
-    if(time.getHours() > onTimeHour && time.getHours() < offTimeHour)
-    {
-      NEOstrip.setBrightness(50);
-    }
-    else if(time.getHours() == onTimeHour && time.getHours() == offTimeHour)
-    {
-      if(time.getMinutes() > onTimeMin && time.getMinutes() < offTimeMin)
-      {
+    int onTimeHour = onTime.substring(0, 2).toInt();
+    int onTimeMin = onTime.substring(3, 5).toInt();
+    int offTimeHour = offTime.substring(0, 2).toInt();
+    int offTimeMin = offTime.substring(3, 5).toInt();
+
+    // Calculate the current time in decimal format
+    float timeNOW = time.getHours() + (time.getMinutes() / 100.0);
+    float timeON = onTimeHour + (onTimeMin / 100.0);
+    float timeOFF = offTimeHour + (offTimeMin / 100.0);
+
+    // Check if the time is within the dimming range
+    if (timeON <= timeOFF) {
+      if (timeON <= timeNOW && timeNOW < timeOFF) {
+        // Within dimming range
         NEOstrip.setBrightness(dimmedValue);
+      } else {
+        // Outside dimming range
+        NEOstrip.setBrightness(255);
       }
-      else
-      {
+    } else {
+      if (timeNOW < timeOFF || timeNOW >= timeON) {
+        // Within dimming range (time spans midnight)
+        NEOstrip.setBrightness(dimmedValue);
+      } else {
+        // Outside dimming range
         NEOstrip.setBrightness(255);
       }
     }
-    else if(time.getHours() == onTimeHour)
-    {
-      if(time.getMinutes() > onTimeMin)
-      {
-        NEOstrip.setBrightness(dimmedValue);
-      }
-      else
-      {
-        NEOstrip.setBrightness(255);
-      }
-    }
-    else if(time.getHours() == offTimeHour)
-    {
-      if(time.getMinutes() < offTimeMin)
-      {
-        NEOstrip.setBrightness(dimmedValue);
-      }
-      else
-      {
-        NEOstrip.setBrightness(255);
-      }
-    }
-    else
-    {
-      NEOstrip.setBrightness(255);
-    }
+  } else {
+    // If dimming is not enabled, set full brightness
+    NEOstrip.setBrightness(255);
   }
 
   //Serial.println(hours);
   if (title == "checked") {
     render(es_ist);
   }
-  if (mins < 4) {
+  if (mins < 5) {
     render(uhr);
   }
   if ((mins < 10) && (mins > 4)) {
